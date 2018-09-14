@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>轮播demo</title>
+    <style type="text/css">
+    *{
+        padding: 0px;
+        margin: 0px;
+    }
+    #box{
+        height: 461px;
+        width: 270px;
+        position: relative;
+        margin: 50px auto;
+        overflow: hidden;
+    }
+    #show{
+        height: 461px;
+        width: 1350px;
+        z-index: 1;
+        position: absolute;
+    }
+    #buttons{
+        height: 20px;
+        width: 150px;
+        bottom: 40px;
+        z-index: 2;
+        position: absolute;
+        left: 110px;
+    }
+    #buttons span{
+        cursor: pointer;
+        float: left;
+        border: 1px solid #fff;
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        background-color: #333;
+        margin-right: 5px;
+    }
+    #buttons .on{
+        background: orange;
+    }
+    .button{
+        cursor: pointer;
+        display: none;
+        line-height: 40px;
+        text-align: center;
+        font-size: 36px;
+        font-weight: bold;
+        height: 40px;
+        width: 40px;
+        background-color: RGBA(0,0,0,0.3);
+        position: absolute;
+        z-index: 2;
+        top: 200px;
+    }
+    .button:hover{
+        background-color: RGBA(0,0,0,0.7);
+    }
+    #box:hover .button{
+        display: block;
+    }
+    #left{
+        left: 0px;
+    }
+    #right{
+        right: 0px;
+    }
+    </style>
+    <script type="text/javascript">
+    window.onload = function(){
+        var box = document.getElementById('box');    //获取容器
+        var show = document.getElementById('show');   //获取图片列表
+        var buttons = document.getElementById('buttons').getElementsByTagName('span');    //获取按钮
+        var left = document.getElementById('left');    //获取左箭头
+        var right = document.getElementById('right');  //获取右箭头
+        var index = 1;    //获取小圆点的自定义值
+        var animated = false;    //定义一个变量使它的初始值为false，为了使动画在动时我们点击按钮无效，增加动画的流畅度
+        var timer;    //定义一个空变量存放自动播放的计时器
+
+        function showButton() {
+            //当图片换到下一张时，关闭以前亮起的按钮
+            for (var i = 0; i < buttons.length; i++) {
+                if (buttons[i].className == 'on') {
+                    buttons[i].className = '';
+                    break;    //退出这个循环
+                }
+            }
+            buttons[index - 1].className = 'on';
+        }
+
+
+
+
+
+
+
+        function animate(offset) {
+            animated = true;
+            var newLeft = parseInt(show.style.left) + offset;    //offset为图片宽度参数，调用animate函数是改变该参数
+            var time = 300;  //位移总时间   
+            var interval = 10;  //位移间隔时间
+            var speed = offset/(time/interval);  //每次位移量
+            function go() {  //从新定义一个函数来做动画效果，if判断图片是否移动到首尾两张图
+                if ((speed < 0 && parseInt(show.style.left) > newLeft) || (speed > 0 && parseInt(show.style.left) < newLeft)) {
+                    show.style.left = parseInt(show.style.left) + speed + 'px';
+                    setTimeout(go, interval);  //计时器两个参数，前为函数，后为运行go函数间隔的时间
+                }else {  //当要移动到辅助图时转换为真正的第一张或最后一张
+                    animated = false;
+                    show.style.left = newLeft + 'px';    //parseInt把字符串转换为数字
+                    if (newLeft > -270) {
+                        show.style.left = -810 + 'px';
+                    }
+                    if (newLeft < -810) {
+                        show.style.left = -270 + 'px';
+                    }
+                }
+            }
+            go();
+        }
+
+
+
+
+
+        //自动播放函数
+        function play() {
+            timer = setInterval(function () {
+                right.onclick();
+            },3000);
+        }
+        function stop() {
+            clearInterval(timer);
+        }
+
+
+
+
+
+
+        right.onclick = function () {
+            if (index == 3) {
+                index = 1
+            }
+            else{
+                index += 1;   //每次点击箭头的时候都改变index的值
+            }
+            showButton();    //调用这个函数亮起图片响应的按钮
+            if (!animated) {  //animated为false时才可以点击按钮
+                animate(-270);
+            }
+            //animate(-270);
+        }
+        left.onclick = function () {
+            if (index == 1) {
+                index = 3
+            }
+            else{
+                index -= 1;   //每次点击箭头的时候都改变index的值
+            }
+            showButton();
+            if (!animated) {
+                animate(+270);
+            }
+        }
+
+
+
+
+
+
+
+            //按钮的切换
+        for (var i = 0; i < buttons.length; i++){
+            buttons[i].onclick = function () {
+                if (this.className == 'on') {
+                    return;
+                }
+                var myIndex = parseInt(this.getAttribute('index'));  //getAttribute可获取自定义的属性，取点击图片对应的小圆点的index值
+                var offset = -270 * (myIndex - index);
+                index = myIndex;   //把index归位到当前图片的值
+                //animate(offset);
+                showButton();
+                if (!animated) {
+                    animate(offset);
+                }
+            }
+        }
+
+
+
+
+
+        // 鼠标移上移下调用函数
+        box.onmouseover = stop;
+        box.onmouseout = play;
+        play();    
+    }
+    </script>
+</head>
+<body style="background-color:gray">
+    <div id="box">
+        <div id="show" style="left: -270px;">
+                <img src="../pictures/3.jpg" alt="#"><img src="../pictures/1.jpg" alt="#"><img src="../pictures/2.jpg" alt="#"><img src="../pictures/3.jpg" alt="#"><img src="../pictures/1.jpg" alt="#">
+        </div>
+        <div id="buttons">
+            <span index="1" class="on"></span>
+            <span index="2"></span>
+            <span index="3"></span>
+        </div>
+        <div id="left" class="button">&lt;</div>
+        <div id="right" class="button">&gt;</div>
+    </div>
+</body>
+</html>
