@@ -1,0 +1,4 @@
+<view>
+  <text>个人中心...</text>
+  <text>{{username}}</text>
+</view>

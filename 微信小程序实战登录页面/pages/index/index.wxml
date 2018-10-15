@@ -1,0 +1,3 @@
+<view class='mian'>
+  <image class='img' src='/images/index.jpg'></image>
+</view>
